@@ -259,4 +259,8 @@ export class AppService {
       return result.flat(1);
     }
   }
+
+  getStart(): string {
+    return 'Monitoring historical thresholds';
+  }
 }
