@@ -1,0 +1,181 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Метрика"""
+type Metric {
+  """Уникальный идентификатор метрики"""
+  id: ID!
+
+  """Название метрики"""
+  name: String!
+}
+
+"""Роль"""
+type Role {
+  """Уникальный идентификатор роли"""
+  id: ID!
+
+  """Название роли"""
+  name: String!
+}
+
+"""Ресурс"""
+type Resource {
+  """Уникальный идентификатор ресурса"""
+  id: ID!
+
+  """Название ресурса"""
+  name: String!
+
+  """ID роли"""
+  roleId: String!
+  role: Role!
+}
+
+"""Значение порога и время его добавления"""
+type ThresholdValue {
+  """Уникальный идентификатор значения порога"""
+  id: ID!
+
+  """Время добавления нового значения для порога"""
+  createdAt: DateTime!
+
+  """Значение порога"""
+  value: Float!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""Запись порога"""
+type Threshold {
+  """Уникальный идентификатор порога"""
+  id: ID!
+
+  """Тип объекта, для которого настроен порог"""
+  objectKind: String!
+
+  """ID роли, для которой настроен порог"""
+  roleId: String!
+
+  """ID ресурса, для которого настроен порог"""
+  resourceId: String
+
+  """ID метрики"""
+  metricId: String!
+
+  """Уровень критичности. Возможны: WARN, CRIT"""
+  level: String!
+
+  """Исторические значения порога"""
+  values: [ThresholdValue]!
+  metric: Metric!
+  role: Role!
+  resource: Resource
+}
+
+type Query {
+  readThresholds: [Threshold!]!
+  readThreshold(id: String!): Threshold!
+  readThresholdHistory(metricName: String!, role: String!, resource: String!, level: String!): Threshold!
+  readMetrics: [Metric!]!
+  readMetric(id: String!): Metric!
+  readRoles: [Role!]!
+  readRole(id: String!): Role!
+  readResources: [Resource!]!
+  readResource(id: String!): Resource!
+}
+
+type Mutation {
+  createThreshold(createThresholdInput: CreateThresholdInput!): Threshold!
+  updateThreshold(updateThresholdInput: UpdateThresholdInput!): Threshold!
+  removeThreshold(id: String!): Threshold!
+  createMetric(createMetricInput: CreateMetricInput!): Metric!
+  updateMetric(updateMetricInput: UpdateMetricInput!): Metric!
+  removeMetric(id: String!): Metric!
+  createRole(createRoleInput: CreateRoleInput!): Role!
+  updateRole(updateRoleInput: UpdateRoleInput!): Role!
+  removeRole(id: String!): Role!
+  createResource(createResourceInput: CreateResourceInput!): Resource!
+  updateResource(updateResourceInput: UpdateResourceInput!): Resource!
+  removeResource(id: String!): Resource!
+}
+
+input CreateThresholdInput {
+  """ID метрики"""
+  metricId: String!
+
+  """Тип объекта, для которого создаётся порог"""
+  objectKind: String!
+
+  """ID роли"""
+  roleId: String!
+
+  """ID ресурса"""
+  resourceId: String
+
+  """Уровень для порога. Возможны: WARN, CRIT"""
+  level: String!
+
+  """Значение порога"""
+  value: Float!
+}
+
+input UpdateThresholdInput {
+  """ID редактируемого порога"""
+  id: String!
+
+  """Новое значение для порога"""
+  value: Float!
+}
+
+"""Добавление метрики"""
+input CreateMetricInput {
+  """Название метрики"""
+  name: String!
+}
+
+input UpdateMetricInput {
+  """Новое название для метрики"""
+  name: String!
+
+  """ID редактируемой метрики"""
+  id: String!
+}
+
+"""Добавление роли"""
+input CreateRoleInput {
+  """Название роли"""
+  name: String!
+}
+
+input UpdateRoleInput {
+  """Новое название для роли"""
+  name: String!
+
+  """ID редактируемой роли"""
+  id: String!
+}
+
+"""Добавление ресурса"""
+input CreateResourceInput {
+  """Название ресурса"""
+  name: String!
+
+  """ID роли"""
+  roleId: String!
+}
+
+input UpdateResourceInput {
+  """Новое название для ресурса"""
+  name: String!
+
+  """ID роли"""
+  roleId: String
+
+  """ID редактируемого ресурса"""
+  id: String!
+}

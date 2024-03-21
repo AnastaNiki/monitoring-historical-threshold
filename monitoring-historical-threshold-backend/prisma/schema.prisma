@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  // previewFeatures = ["mongodb"]
+  previewFeatures = ["referentialActions"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Metric {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String      @unique
+  Threshold Threshold[]
+}
+
+model Role {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String      @unique
+  Resource  Resource[]
+  Threshold Threshold[]
+}
+
+model Resource {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String      @unique
+  role      Role        @relation(fields: [roleId], references: [id])
+  roleId    String      @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
+  Threshold Threshold[]
+}
+
+enum ObjectKind {
+  ROLE
+  RESOURCE
+}
+
+enum Level {
+  WARN
+  CRIT
+}
+
+model ThresholdValue {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime  @default(now())
+  value       Float
+  Threshold   Threshold @relation("ThresholdHistory", fields: [thresholdId], references: [id], onDelete: Cascade)
+  thresholdId String    @db.ObjectId
+}
+
+model Threshold {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  metric     Metric           @relation(fields: [metricId], references: [id])
+  metricId   String           @db.ObjectId
+  objectKind ObjectKind
+  role       Role             @relation(fields: [roleId], references: [id])
+  roleId     String           @db.ObjectId
+  resource   Resource?        @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  resourceId String?          @db.ObjectId
+  level      Level            @default(WARN)
+  values     ThresholdValue[] @relation("ThresholdHistory")
+}

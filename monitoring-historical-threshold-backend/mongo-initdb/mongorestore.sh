@@ -1,0 +1,1 @@
+mongorestore --authenticationDatabase=admin -u admin -p admin  --archive=db.dump
